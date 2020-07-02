@@ -57,6 +57,10 @@ public class BankAccountManager {
         return idBankAccountMap.remove(id);
     }
 
+    public BankAccount removeAccount(UUID uuid) {
+        return removeAccount(uuid.toString());
+    }
+
     public Map<String, BankAccount> getIdBankAccountMap() {
         return idBankAccountMap;
     }

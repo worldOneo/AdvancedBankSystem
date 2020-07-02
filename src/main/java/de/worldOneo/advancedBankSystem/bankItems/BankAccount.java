@@ -8,11 +8,12 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 public class BankAccount implements IBankItem, IStoreable {
     private final Map<String, Account> accountHashMap = new HashMap<>();
     private String id;
-    private final String ownerId;
+    private String ownerId;
 
     public BankAccount(String ownerId) {
         this.ownerId = ownerId;
@@ -75,5 +76,10 @@ public class BankAccount implements IBankItem, IStoreable {
         } catch (SQLException throwables) {
             return false;
         }
+    }
+
+    @Override
+    public Future<Boolean> delete() {
+        return MySQLManager.getInstance().executeUpdate(String.format("UPDATE `%s` SET IDOwner='%s' WHERE id='%s'", TableCreationStrings.CUSTOMER.getTableName(), this.ownerId + "-deleted", this.id));
     }
 }

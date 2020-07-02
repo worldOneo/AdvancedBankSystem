@@ -32,7 +32,7 @@ public class PayGUI extends AbstractGUI {
         Account account = bankAccountMap.get(player.getUniqueId())
                 .getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
         if (account != null) {
-            GUIManager.getInstance().getGui(YesNoGUI.class).getInstance().open((Player) e.getWhoClicked(), o -> {
+            GUIManager.getInstance().getGui(YesNoGUI.class).getInstance().open((Player) e.getWhoClicked(), "Confirm the Transaction", o -> {
                 boolean yesno = (Boolean) o;
                 if (yesno) {
                     consumerHashMap.get(player.getUniqueId()).accept(account);

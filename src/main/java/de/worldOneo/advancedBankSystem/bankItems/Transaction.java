@@ -4,6 +4,7 @@ import de.worldOneo.advancedBankSystem.manager.MySQLManager;
 import de.worldOneo.advancedBankSystem.utils.TableCreationStrings;
 import de.worldOneo.advancedBankSystem.utils.Utils;
 
+import java.sql.Struct;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -74,6 +75,11 @@ public class Transaction implements IBankItem, IStoreable {
     @Override
     public void save() {
 
+    }
+
+    @Override
+    public Future<Boolean> delete() {
+        return null;
     }
 
     @Override

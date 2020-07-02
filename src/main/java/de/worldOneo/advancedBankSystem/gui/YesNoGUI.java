@@ -24,7 +24,7 @@ public class YesNoGUI extends AbstractGUI {
         YES(Utils.getNamedItem(Material.GREEN_DYE, "Yes!")),
         NO(Utils.getNamedItem(Material.RED_DYE, "No!"));
 
-        private ItemStack itemStack;
+        private final ItemStack itemStack;
 
         YesNo(ItemStack itemStack) {
             this.itemStack = itemStack;
@@ -55,11 +55,18 @@ public class YesNoGUI extends AbstractGUI {
     }
 
     @Override
-    public void open(Player player, Consumer<Object> callback) {
+    public void open(Player player, Object descriptionObj, Consumer<Object> callback) {
+        String description = (String) descriptionObj;
         consumerHashMap.put(player.getUniqueId(), callback);
         Inventory inventory = Bukkit.createInventory(null, 9, getGUITitle());
         inventory.setItem(3, YesNo.YES.getItemStack());
+        inventory.setItem(4, Utils.getNamedItem(Material.PAPER, description));
         inventory.setItem(5, YesNo.NO.getItemStack());
         player.openInventory(inventory);
+    }
+
+    @Override
+    public void open(Player player, Consumer<Object> callback) {
+        open(player, "Confirm!", callback);
     }
 }

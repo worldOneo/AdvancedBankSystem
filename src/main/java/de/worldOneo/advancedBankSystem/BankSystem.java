@@ -2,6 +2,7 @@ package de.worldOneo.advancedBankSystem;
 
 import de.worldOneo.advancedBankSystem.bankItems.IStoreable;
 import de.worldOneo.advancedBankSystem.command.BankCommandExecutor;
+import de.worldOneo.advancedBankSystem.gui.AccountSettingsGUI;
 import de.worldOneo.advancedBankSystem.gui.InfoGUI;
 import de.worldOneo.advancedBankSystem.gui.PayGUI;
 import de.worldOneo.advancedBankSystem.gui.YesNoGUI;
@@ -86,6 +87,7 @@ public class BankSystem extends JavaPlugin {
         guiManager.registerGUI(new PayGUI());
         guiManager.registerGUI(new YesNoGUI());
         guiManager.registerGUI(new InfoGUI());
+        guiManager.registerGUI(new AccountSettingsGUI());
     }
 
     public static BankSystem getInstance() {

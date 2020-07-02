@@ -14,7 +14,9 @@ import java.util.Collection;
 public class GUIUtils {
     public static Inventory listAccounts(Collection<Account> accounts, String title) {
         float accountCount = accounts.size();
-        Inventory inventory = Bukkit.createInventory(null, (int) Math.ceil(accountCount / 9) * 9, title);
+        int size = (int) Math.ceil(accountCount / 9) * 9;
+        size = size == 0 ? 9 : size;
+        Inventory inventory = Bukkit.createInventory(null, size, title);
         accounts.forEach(account -> {
             ItemStack itemStack = new ItemStack(Material.GOLD_NUGGET);
             ItemMeta itemMeta = itemStack.getItemMeta();

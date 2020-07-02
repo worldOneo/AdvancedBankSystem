@@ -1,5 +1,6 @@
 package de.worldOneo.advancedBankSystem.bankItems;
 
+
 import de.worldOneo.advancedBankSystem.manager.MySQLManager;
 import de.worldOneo.advancedBankSystem.utils.TableCreationStrings;
 import de.worldOneo.advancedBankSystem.utils.Utils;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class Account implements IBankItem, IValue, IStoreable {
     private final List<Transaction> transactionList = new ArrayList<>();
@@ -39,14 +41,14 @@ public class Account implements IBankItem, IValue, IStoreable {
     }
 
 
-    public boolean makeTransaction(Account to, long value, String reason) {
+    public Transaction makeTransaction(Account to, long value, String reason) {
         if (this.value >= value) {
             Transaction transaction = new Transaction(this.getId(), to.getId(), value, System.currentTimeMillis(), reason);
             transactionList.add(transaction);
             remValue(value);
-            return true;
+            return transaction;
         }
-        return false;
+        return null;
     }
 
     public List<Transaction> getTransactionList() {
@@ -111,5 +113,11 @@ public class Account implements IBankItem, IValue, IStoreable {
         } catch (SQLException throwables) {
             return false;
         }
+    }
+
+    @Override
+    public Future<Boolean> delete() {
+        String format = String.format("UPDATE `%s` SET IDOwner='%s' WHERE id='%s'", TableCreationStrings.ACCOUNTS.getTableName(), this.ownerId + "-deleted", this.id);
+        return MySQLManager.getInstance().executeUpdate(format);
     }
 }

@@ -2,6 +2,7 @@ package de.worldOneo.advancedBankSystem.command.subCommands;
 
 import de.worldOneo.advancedBankSystem.BankSystem;
 import de.worldOneo.advancedBankSystem.bankItems.Account;
+import de.worldOneo.advancedBankSystem.bankItems.Transaction;
 import de.worldOneo.advancedBankSystem.gui.PayGUI;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
 import de.worldOneo.advancedBankSystem.manager.GUIManager;
@@ -45,15 +46,17 @@ public class PayCommand implements PlayerSubCommand {
         }
         StringBuilder reason = new StringBuilder();
         for (int i = 4; i < args.length; i++) {
-            reason.append(" ").append(args[0]);
+            reason.append(" ").append(args[i]);
         }
         uuidAccountIDTempMap.put(player.getUniqueId(), BankAccountManager.getInstance().getBankAccount(playerTo.getUniqueId().toString()).getAccount(args[2]));
         GUIManager.getInstance().getGui(PayGUI.class).open(player, playerTo, o -> {
             Account accountFrom = (Account) o;
             Account accountTo = uuidAccountIDTempMap.get(player.getUniqueId());
-            if (accountFrom.makeTransaction(accountTo, value, reason.toString())) {
+            Transaction transaction = accountFrom.makeTransaction(accountTo, value, reason.toString());
+            if (transaction != null) {
                 accountTo.addValue(value);
-                player.sendMessage("Transaction successful!");
+                player.sendMessage(String.format("Transaction successful! (%s) -[%d$]-> (%s)",
+                        transaction.getIdFrom(), transaction.getValue(), transaction.getIdTo()));
             } else {
                 player.sendMessage("Transaction failed!");
             }

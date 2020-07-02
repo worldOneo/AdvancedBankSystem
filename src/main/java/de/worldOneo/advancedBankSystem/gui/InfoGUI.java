@@ -2,6 +2,7 @@ package de.worldOneo.advancedBankSystem.gui;
 
 import de.worldOneo.advancedBankSystem.bankItems.Account;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
+import de.worldOneo.advancedBankSystem.manager.GUIManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -16,8 +17,15 @@ public class InfoGUI extends AbstractGUI {
 
     @Override
     public boolean handle(InventoryClickEvent e) {
-        e.setCancelled(true);
-        return true;
+        if (e.getCurrentItem() == null || e.getClickedInventory() == null || e.getCurrentItem().getItemMeta() == null) {
+            return false;
+        }
+        Player player = (Player) e.getWhoClicked();
+        Account account = BankAccountManager.getInstance().getBankAccount(player.getUniqueId()).getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
+        if(account != null){
+            GUIManager.getInstance().getGui(AccountSettingsGUI.class).open(player, account, o -> {});
+        }
+        return super.handle(e);
     }
 
     @Override

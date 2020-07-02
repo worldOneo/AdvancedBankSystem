@@ -9,6 +9,7 @@ public abstract class AbstractGUI implements IGUI {
 
     @Override
     public boolean handle(InventoryClickEvent e) {
+        e.setCancelled(true);
         return false;
     }
 
