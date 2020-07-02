@@ -1,0 +1,10 @@
+mysql:
+  username: root
+  password: "root"
+  database: undefined
+  url: "127.0.0.1:3306"
+
+help:
+  create: "/<cmd> create [account-alias]\nCreates a new account"
+  open: '/<cmd> open\nOpens the Bank GUI'
+  pay: "/<cmd> pay <username> <account-id> <amount>\nShows you a pay menu"

@@ -1,0 +1,10 @@
+name: AdvancedBankSystem
+api-version: "1.16"
+version: 0.0.1
+main: de.worldOneo.advancedBankSystem.BankSystem
+commands:
+  banksystem:
+    description: access to the Bank System
+    usage: /<command> help (create | pay)
+    permission: advancedbanksystem.bankcommand
+    aliases: [bs, bank]
