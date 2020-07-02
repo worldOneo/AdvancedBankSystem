@@ -22,8 +22,9 @@ public class InfoGUI extends AbstractGUI {
         }
         Player player = (Player) e.getWhoClicked();
         Account account = BankAccountManager.getInstance().getBankAccount(player.getUniqueId()).getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
-        if(account != null){
-            GUIManager.getInstance().getGui(AccountSettingsGUI.class).open(player, account, o -> {});
+        if (account != null) {
+            GUIManager.getInstance().getGui(AccountSettingsGUI.class).open(player, account, o -> {
+            });
         }
         return super.handle(e);
     }

@@ -19,7 +19,7 @@ repositories {
 }
 
 configurations {
-    includeToJar{
+    includeToJar {
 
     }
 }

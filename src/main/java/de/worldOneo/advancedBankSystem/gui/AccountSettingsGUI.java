@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-public class AccountSettingsGUI extends AbstractGUI{
+public class AccountSettingsGUI extends AbstractGUI {
     private final HashMap<UUID, Account> uuidAccountHashMap = new HashMap<>();
 
 
@@ -26,7 +26,7 @@ public class AccountSettingsGUI extends AbstractGUI{
         return this;
     }
 
-    private enum Options   {
+    private enum Options {
         DELETE(Utils.getNamedItem(Material.CAULDRON, "Delete this account"));
         private final ItemStack itemStack;
 
@@ -44,10 +44,10 @@ public class AccountSettingsGUI extends AbstractGUI{
         if (e.getCurrentItem() == null || e.getClickedInventory() == null || e.getCurrentItem().getItemMeta() == null) {
             return false;
         }
-        if(e.getCurrentItem().equals(Options.DELETE.getItemStack())){
+        if (e.getCurrentItem().equals(Options.DELETE.getItemStack())) {
             final Player player = (Player) e.getWhoClicked();
             GUIManager.getInstance().getGui(YesNoGUI.class).open(player, o -> {
-                if((boolean) o){
+                if ((boolean) o) {
                     try {
                         player.closeInventory();
                         uuidAccountHashMap.get(e.getWhoClicked().getUniqueId()).delete().get();
@@ -61,7 +61,7 @@ public class AccountSettingsGUI extends AbstractGUI{
                         player.sendMessage("An error occurred!");
                     }
 
-                }else{
+                } else {
                     e.getWhoClicked().closeInventory();
                 }
             });

@@ -55,8 +55,10 @@ public class PayCommand implements PlayerSubCommand {
             Transaction transaction = accountFrom.makeTransaction(accountTo, value, reason.toString());
             if (transaction != null) {
                 accountTo.addValue(value);
-                player.sendMessage(String.format("Transaction successful! (%s) -[%d$]-> (%s)",
-                        transaction.getIdFrom(), transaction.getValue(), transaction.getIdTo()));
+                String format = String.format("Transaction successful! %s (%s) -[%d$]-> %s (%s) : %s", player.getDisplayName(),
+                        transaction.getIdFrom(), transaction.getValue(), playerTo.getDisplayName(), transaction.getIdTo(), transaction.getReason());
+                player.sendMessage(format);
+                playerTo.sendMessage(format);
             } else {
                 player.sendMessage("Transaction failed!");
             }

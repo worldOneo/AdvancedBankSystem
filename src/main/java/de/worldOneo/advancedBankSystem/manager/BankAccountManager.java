@@ -3,6 +3,9 @@ package de.worldOneo.advancedBankSystem.manager;
 import de.worldOneo.advancedBankSystem.bankItems.BankAccount;
 import de.worldOneo.advancedBankSystem.utils.TableCreationStrings;
 import de.worldOneo.advancedBankSystem.utils.Utils;
+import org.bukkit.Material;
+import org.bukkit.block.CreatureSpawner;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,6 +61,8 @@ public class BankAccountManager {
     }
 
     public BankAccount removeAccount(UUID uuid) {
+        ItemStack itemStack = new ItemStack(Material.SPAWNER);
+        CreatureSpawner creatureSpawner = (CreatureSpawner) itemStack.getItemMeta();
         return removeAccount(uuid.toString());
     }
 
