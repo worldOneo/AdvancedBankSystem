@@ -42,13 +42,17 @@ public class Account implements IBankItem, IValue, IStoreable {
 
 
     public Transaction makeTransaction(Account to, long value, String reason) {
-        if (this.value >= value) {
+        if (value > 0 && this.value >= value) {
             Transaction transaction = new Transaction(this.getId(), to.getId(), value, System.currentTimeMillis(), reason);
             transactionList.add(transaction);
             remValue(value);
             return transaction;
         }
         return null;
+    }
+
+    public Transaction makeTransaction(Account to, long value) {
+        return makeTransaction(to, value, "Unknown");
     }
 
     public List<Transaction> getTransactionList() {

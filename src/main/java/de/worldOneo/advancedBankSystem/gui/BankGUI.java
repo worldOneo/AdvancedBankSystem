@@ -1,6 +1,9 @@
 package de.worldOneo.advancedBankSystem.gui;
 
+import de.worldOneo.advancedBankSystem.bankItems.Account;
+import de.worldOneo.advancedBankSystem.bankItems.Transaction;
 import de.worldOneo.advancedBankSystem.manager.GUIManager;
+import de.worldOneo.advancedBankSystem.utils.AccountSelectorInfo;
 import de.worldOneo.advancedBankSystem.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,11 +47,43 @@ public class BankGUI extends AbstractGUI {
             return false;
         }
         ItemStack itemStack = e.getCurrentItem();
+        Player clicker = (Player) e.getWhoClicked();
+        GUIManager guiManager = GUIManager.getInstance();
         if (itemStack.equals(MenuItems.MY_ACCOUNT.getItemStack())) {
-            GUIManager.getInstance().getGui(InfoGUI.class).open((Player) e.getWhoClicked(), o -> {
+            guiManager.getGui(InfoGUI.class).open((Player) e.getWhoClicked(), o -> {
             });
         } else if (itemStack.equals(MenuItems.PAY_OTHER.getItemStack())) {
-            GUIManager.getInstance().getGui(PlayerSelectorGUI.class).open((Player) e.getWhoClicked(), o -> {
+            guiManager.getGui(PlayerSelectorGUI.class).open(clicker, o -> {
+                Player player = (Player) o;
+                guiManager.getGui(AccountSelectorGUI.class).open(clicker, new AccountSelectorInfo(player, false, true),
+                        o1 -> {
+                            Account account = (Account) o1;
+                            guiManager.getGui(ValueSelectorGUI.class).open(clicker, o2 -> {
+                                int value = (int) o2;
+                                if (value <= 0) {
+                                    return;
+                                }
+                                guiManager.getGui(AccountSelectorGUI.class)
+                                        .open(clicker, new AccountSelectorInfo(clicker, true, true), o3 -> {
+                                            Account accountFrom = (Account) o3;
+                                            String format = String.format("%s (%s) -[%d$]-> %s (%s)", clicker.getDisplayName(), accountFrom.getId(), value, player.getDisplayName(), account.getId());
+                                            guiManager.getGui(YesNoGUI.class).open(clicker, format, o4 -> {
+                                                boolean transfer = (Boolean) o4;
+                                                if (transfer) {
+                                                    Transaction transaction = accountFrom.makeTransaction(account, value);
+                                                    if (transaction != null) {
+                                                        String message = "Transaction successful! (" + format + ")";
+                                                        clicker.sendMessage(message);
+                                                        player.sendMessage(message);
+                                                    } else {
+                                                        clicker.sendMessage("Transaction failed");
+                                                    }
+                                                }
+                                                clicker.closeInventory();
+                                            });
+                                        });
+                            });
+                        });
             });
         }
         return super.handle(e);

@@ -36,8 +36,7 @@ public class PlayerSelectorGUI extends AbstractGUI {
         } else if (e.getCurrentItem().equals(backItem)) {
             uuidIndexHashMap.put(e.getWhoClicked().getUniqueId(), uuidIndexHashMap.get(e.getWhoClicked().getUniqueId()) - 53);
         } else if (Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName()) != null) {
-            System.out.println("Execute!");
-            uuidConsumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(e.getWhoClicked().getUniqueId());
+            uuidConsumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName()));
         }
         return super.handle(e);
     }

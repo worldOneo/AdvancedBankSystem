@@ -23,7 +23,7 @@ public class GUIUtils {
             ItemMeta itemMeta = itemStack.getItemMeta();
             assert itemMeta != null;
             itemMeta.setDisplayName(account.getId());
-            itemMeta.setLore(Arrays.asList(Utils.colorize("&6" + account.getValue() + "$"), account.getName()));
+            itemMeta.setLore(Arrays.asList(Utils.colorize(showValue ? "&6" + account.getValue() + "$" : ""), showName ? account.getName() : ""));
             itemStack.setItemMeta(itemMeta);
             inventory.addItem(itemStack);
         });
