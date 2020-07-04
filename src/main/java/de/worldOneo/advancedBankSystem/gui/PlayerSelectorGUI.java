@@ -35,8 +35,10 @@ public class PlayerSelectorGUI extends AbstractGUI {
             uuidIndexHashMap.put(e.getWhoClicked().getUniqueId(), uuidIndexHashMap.get(e.getWhoClicked().getUniqueId()) + 53);
         } else if (e.getCurrentItem().equals(backItem)) {
             uuidIndexHashMap.put(e.getWhoClicked().getUniqueId(), uuidIndexHashMap.get(e.getWhoClicked().getUniqueId()) - 53);
-        } else if (Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName()) != null) {
-            uuidConsumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(Bukkit.getPlayer(e.getCurrentItem().getItemMeta().getDisplayName()));
+        } else if (e.getCurrentItem().getItemMeta() instanceof SkullMeta) {
+            SkullMeta skullMeta = (SkullMeta) e.getCurrentItem().getItemMeta();
+            Player player = (Player) skullMeta.getOwningPlayer();
+            uuidConsumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(player);
         }
         return super.handle(e);
     }

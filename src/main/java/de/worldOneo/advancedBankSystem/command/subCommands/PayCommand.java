@@ -6,10 +6,11 @@ import de.worldOneo.advancedBankSystem.bankItems.Transaction;
 import de.worldOneo.advancedBankSystem.gui.PayGUI;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
 import de.worldOneo.advancedBankSystem.manager.GUIManager;
-import org.bukkit.Bukkit;
+import de.worldOneo.advancedBankSystem.utils.Utils;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -32,11 +33,12 @@ public class PayCommand implements PlayerSubCommand {
             player.sendMessage(Objects.requireNonNull(BankSystem.getInstance().getConfig().getString("help.pay")));
             return true;
         }
-        Player playerTo = Bukkit.getPlayer(args[1]);
-        if (playerTo == null) {
+        List<Player> playerList = Utils.resolveDisplayName(args[1]);
+        if (playerList.size() == 0) {
             player.sendMessage("The player is not online!");
             return true;
         }
+        Player playerTo = playerList.get(0);
         final long value;
         try {
             value = Long.parseLong(args[3]);
