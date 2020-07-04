@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
 }
 
 version "${PROJECT_VERSION}"
@@ -18,21 +19,17 @@ repositories {
     mavenLocal() // This is needed for CraftBukkit and Spigot.
 }
 
-configurations {
-    includeToJar {
-
-    }
-}
-
 dependencies {
-    compileOnly "com.zaxxer:HikariCP:3.4.3"
-    includeToJar "com.zaxxer:HikariCP:3.4.3"
-    includeToJar group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
+    shadow "com.zaxxer:HikariCP:3.4.3"
+    shadow group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.0'
     // Pick only one of these and read the comment in the repositories block.
     compileOnly "org.spigotmc:spigot-api:${MCVERSION}"
     // The full Spigot server with no shadowing. Requires mavenLocal.
 }
 
-jar {
-    from configurations.includeToJar.collect() { zipTree it }
+shadowJar {
+    archiveName("Shadowed-${rootProject.name}-${PROJECT_VERSION}.jar")
+    configurations = [project.configurations.shadow]
 }
+
+build.dependsOn(shadowJar)

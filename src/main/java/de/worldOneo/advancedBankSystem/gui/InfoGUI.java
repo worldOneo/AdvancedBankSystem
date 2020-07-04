@@ -17,7 +17,7 @@ public class InfoGUI extends AbstractGUI {
 
     @Override
     public boolean handle(InventoryClickEvent e) {
-        if (e.getCurrentItem() == null || e.getClickedInventory() == null || e.getCurrentItem().getItemMeta() == null) {
+        if (!GUIUtils.isHandleable(e)) {
             return false;
         }
         Player player = (Player) e.getWhoClicked();

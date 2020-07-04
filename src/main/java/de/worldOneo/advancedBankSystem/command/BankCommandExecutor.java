@@ -2,7 +2,9 @@ package de.worldOneo.advancedBankSystem.command;
 
 import de.worldOneo.advancedBankSystem.bankItems.IBankItem;
 import de.worldOneo.advancedBankSystem.command.subCommands.CreateCommand;
+import de.worldOneo.advancedBankSystem.command.subCommands.HelpCommand;
 import de.worldOneo.advancedBankSystem.command.subCommands.PayCommand;
+import de.worldOneo.advancedBankSystem.gui.BankGUI;
 import de.worldOneo.advancedBankSystem.gui.InfoGUI;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
 import de.worldOneo.advancedBankSystem.manager.GUIManager;
@@ -20,14 +22,17 @@ import java.util.stream.Collectors;
 public class BankCommandExecutor implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 0) {
-            return false;
-        }
+
         if (!(sender instanceof Player)) {
             sender.sendMessage("Only players can work with the Bank!");
             return true;
         }
         Player player = (Player) sender;
+        if (args.length == 0) {
+            GUIManager.getInstance().getGui(BankGUI.class).open(player, o -> {
+            });
+            return true;
+        }
         switch (args[0]) {
             case "create":
                 CreateCommand.getInstance().execute(player, args);
@@ -36,7 +41,7 @@ public class BankCommandExecutor implements CommandExecutor, TabCompleter {
                 PayCommand.getInstance().execute(player, args);
                 break;
             case "help":
-                break;
+                return HelpCommand.getInstance().execute(player, args);
             case "info":
                 GUIManager.getInstance().getGui(InfoGUI.class).open(player, null);
                 break;
@@ -53,7 +58,7 @@ public class BankCommandExecutor implements CommandExecutor, TabCompleter {
             case "create":
                 return Arrays.asList("custom-name");
             case "help":
-                return Arrays.asList("create", "pay");
+                return Arrays.asList("create", "pay", "info");
             case "pay":
                 if (args.length == 2) {
                     return Bukkit.getOnlinePlayers().stream().map(Player::getDisplayName).collect(Collectors.toList());

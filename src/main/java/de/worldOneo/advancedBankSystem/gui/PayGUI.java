@@ -25,7 +25,7 @@ public class PayGUI extends AbstractGUI {
     @Override
     public boolean handle(InventoryClickEvent e) {
         e.setCancelled(true);
-        if (e.getCurrentItem() == null || e.getClickedInventory() == null || e.getCurrentItem().getItemMeta() == null) {
+        if (!GUIUtils.isHandleable(e)) {
             return false;
         }
         Player player = (Player) e.getWhoClicked();
