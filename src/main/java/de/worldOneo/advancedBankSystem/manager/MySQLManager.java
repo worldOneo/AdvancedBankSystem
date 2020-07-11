@@ -51,7 +51,7 @@ public class MySQLManager {
 
     private void connect() {
         try (Connection connection = hikariDataSource.getConnection()) {
-            sellectDb(connection);
+            selectDb(connection);
             Statement createTable = connection.createStatement();
             for (TableCreationStrings value : TableCreationStrings.values()) {
                 createTable.executeUpdate(value.getSQLString());
@@ -65,7 +65,7 @@ public class MySQLManager {
     public Future<Boolean> executeUpdate(String update) {
         Callable<Boolean> updateTask = () -> {
             try (Connection connection = hikariDataSource.getConnection()) {
-                sellectDb(connection);
+                selectDb(connection);
                 Statement updateStatement = connection.createStatement();
                 updateStatement.executeUpdate(update);
                 return true;
@@ -79,7 +79,7 @@ public class MySQLManager {
 
     public boolean executeUpdateSync(String update) {
         try (Connection connection = hikariDataSource.getConnection()) {
-            sellectDb(connection);
+            selectDb(connection);
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(update);
             return true;
@@ -95,7 +95,7 @@ public class MySQLManager {
             if (connection == null) {
                 return null;
             }
-            sellectDb(connection);
+            selectDb(connection);
             PreparedStatement statement = connection.prepareStatement(query);
             statement.execute();
             resultSet = statement.getResultSet();
@@ -107,7 +107,7 @@ public class MySQLManager {
         return resultSet;
     }
 
-    private static void sellectDb(Connection connection) throws SQLException {
+    private static void selectDb(Connection connection) throws SQLException {
         Statement statement;
         statement = connection.createStatement();
         statement.executeUpdate("USE " + dbName + ";");
