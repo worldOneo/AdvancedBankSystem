@@ -2,17 +2,16 @@ package de.worldOneo.advancedBankSystem.gui;
 
 import de.worldOneo.advancedBankSystem.bankItems.Account;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
-import de.worldOneo.advancedBankSystem.manager.GUIManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.util.Collection;
-import java.util.function.Consumer;
 
 public class InfoGUI extends AbstractGUI {
-    @Override
-    public IGUI getInstance() {
-        return this;
+
+    public InfoGUI(Player player) {
+        super(player);
     }
 
     @Override
@@ -23,16 +22,17 @@ public class InfoGUI extends AbstractGUI {
         Player player = (Player) e.getWhoClicked();
         Account account = BankAccountManager.getInstance().getBankAccount(player.getUniqueId()).getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
         if (account != null) {
-            GUIManager.getInstance().getGui(AccountSettingsGUI.class).open(player, account, o -> {
-            });
+            AccountSettingsGUI accountSettingsGUI = new AccountSettingsGUI(getPlayer());
+            accountSettingsGUI.setAccount(account);
+            accountSettingsGUI.open();
         }
         return super.handle(e);
     }
 
     @Override
-    public void open(Player player, Consumer<Object> callback) {
-        Collection<Account> accounts = BankAccountManager.getInstance().getBankAccount(player.getUniqueId()).getAccounts();
-        player.openInventory(GUIUtils.listAccounts(accounts, getGUITitle()));
+    public Inventory render() {
+        Collection<Account> accounts = BankAccountManager.getInstance().getBankAccount(getPlayer().getUniqueId()).getAccounts();
+        return GUIUtils.listAccounts(accounts, getGUITitle());
     }
 
     @Override

@@ -4,22 +4,17 @@ import de.worldOneo.advancedBankSystem.bankItems.Account;
 import de.worldOneo.advancedBankSystem.bankItems.BankAccount;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
 import de.worldOneo.advancedBankSystem.utils.AccountSelectorInfo;
-import de.worldOneo.advancedBankSystem.utils.Utils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.function.Consumer;
+public class AccountSelectorGUI extends AbstractInputGUI<Account> {
+    private BankAccount bankAccount;
+    private AccountSelectorInfo accountSelectorInfo;
+    private Account account;
 
-public class AccountSelectorGUI extends AbstractGUI {
-    private final HashMap<UUID, Consumer<Object>> consumerHashMap = new HashMap<>();
-    private final HashMap<UUID, BankAccount> bankAccountMap = new HashMap<>();
-
-    @Override
-    public IGUI getInstance() {
-        return this;
+    public AccountSelectorGUI(Player player) {
+        super(player);
     }
 
     @Override
@@ -27,30 +22,43 @@ public class AccountSelectorGUI extends AbstractGUI {
         if (!GUIUtils.isHandleable(e)) {
             return false;
         }
-        Account account = bankAccountMap.get(e.getWhoClicked().getUniqueId()).getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
+        Account account = bankAccount.getAccount(e.getCurrentItem().getItemMeta().getDisplayName());
         if (account != null) {
             e.getWhoClicked().closeInventory();
-            consumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(account);
+            this.account = account;
+            commitValue();
         }
         return super.handle(e);
     }
 
-    /**
-     * @param selectorInfoObj a AccountSelectorInfo object.
-     * @param callback        is called with the selected account
-     */
+
     @Override
-    public void open(Player player, Object selectorInfoObj, Consumer<Object> callback) {
-        consumerHashMap.put(player.getUniqueId(), callback);
-        AccountSelectorInfo accountSelectorInfo = (AccountSelectorInfo) selectorInfoObj;
+    public Inventory render() {
         BankAccount bankAccount = BankAccountManager.getInstance().getBankAccount(accountSelectorInfo.player.getUniqueId());
-        bankAccountMap.put(player.getUniqueId(), bankAccount);
-        Inventory inventory = GUIUtils.listAccounts(bankAccount.getAccounts(), getGUITitle(), accountSelectorInfo.showValue, accountSelectorInfo.showName);
-        player.openInventory(inventory);
+        return GUIUtils.listAccounts(bankAccount.getAccounts(), getGUITitle(), accountSelectorInfo.showValue, accountSelectorInfo.showName);
     }
 
     @Override
     public String getGUITitle() {
-        return Utils.colorize("&a&rSelect the account");
+        return "Select the account";
+    }
+
+    @Override
+    public Account getValue() {
+        return account;
+    }
+
+    public IGUI setAccountSelectorInfo(AccountSelectorInfo accountSelectorInfo) {
+        this.accountSelectorInfo = accountSelectorInfo;
+        return this;
+    }
+
+    public IGUI setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+        return this;
+    }
+
+    public BankAccount getBankAccount() {
+        return bankAccount;
     }
 }

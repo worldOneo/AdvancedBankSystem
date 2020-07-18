@@ -2,17 +2,14 @@ package de.worldOneo.advancedBankSystem.gui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import java.util.function.Consumer;
+import org.bukkit.inventory.Inventory;
 
 public interface IGUI {
     boolean handle(InventoryClickEvent e);
 
-    IGUI getInstance();
-
     String getGUITitle();
 
-    void open(Player player, Consumer<Object> callback);
+    Inventory render();
 
-    void open(Player player, Object obj, Consumer<Object> callback);
+    Player getPlayer();
 }

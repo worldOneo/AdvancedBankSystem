@@ -3,7 +3,6 @@ package de.worldOneo.advancedBankSystem.gui;
 import de.worldOneo.advancedBankSystem.bankItems.Account;
 import de.worldOneo.advancedBankSystem.bankItems.BankAccount;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
-import de.worldOneo.advancedBankSystem.manager.GUIManager;
 import de.worldOneo.advancedBankSystem.utils.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,15 +14,13 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
 
 public class AccountSettingsGUI extends AbstractGUI {
     private final HashMap<UUID, Account> uuidAccountHashMap = new HashMap<>();
+    private Account account;
 
-
-    @Override
-    public IGUI getInstance() {
-        return this;
+    public AccountSettingsGUI(Player player) {
+        super(player);
     }
 
     private enum Options {
@@ -45,26 +42,9 @@ public class AccountSettingsGUI extends AbstractGUI {
             return false;
         }
         if (e.getCurrentItem().equals(Options.DELETE.getItemStack())) {
-            final Player player = (Player) e.getWhoClicked();
-            GUIManager.getInstance().getGui(YesNoGUI.class).open(player, o -> {
-                if ((boolean) o) {
-                    try {
-                        player.closeInventory();
-                        uuidAccountHashMap.get(e.getWhoClicked().getUniqueId()).delete().get();
-                        player.sendMessage("Reloading Bank account!");
-                        BankAccountManager.getInstance().removeAccount(player.getUniqueId());
-                        BankAccount bankAccount = BankAccountManager.getInstance().createOrLoadAccount(player.getUniqueId().toString());
-                        BankAccountManager.getInstance().addAccount(bankAccount);
-                        player.sendMessage("Reloaded Bank account!");
-                    } catch (InterruptedException | ExecutionException interruptedException) {
-                        interruptedException.printStackTrace();
-                        player.sendMessage("An error occurred!");
-                    }
-
-                } else {
-                    e.getWhoClicked().closeInventory();
-                }
-            });
+            YesNoGUI yesNoGUI = new YesNoGUI(getPlayer());
+            yesNoGUI.setSuccessConsumer(this::onMessageConfirm);
+            yesNoGUI.open();
         }
         return super.handle(e);
     }
@@ -75,11 +55,32 @@ public class AccountSettingsGUI extends AbstractGUI {
     }
 
     @Override
-    public void open(Player player, Object accountObj, Consumer<Object> callback) {
-        Account account = (Account) accountObj;
-        uuidAccountHashMap.put(player.getUniqueId(), account);
+    public Inventory render() {
         Inventory inventory = Bukkit.createInventory(null, 9, getGUITitle());
         inventory.setItem(4, Options.DELETE.getItemStack());
-        player.openInventory(inventory);
+        return inventory;
+    }
+
+    public void setAccount(Account account) {
+        this.account = account;
+    }
+
+    private void onMessageConfirm(Boolean confirmed) {
+        Player player = getPlayer();
+        player.closeInventory();
+        if (confirmed) {
+            try {
+                account.delete().get();
+                player.sendMessage("Reloading Bank account!");
+                BankAccountManager.getInstance().removeAccount(player.getUniqueId());
+                BankAccount bankAccount = BankAccountManager.getInstance().createOrLoadAccount(player.getUniqueId().toString());
+                BankAccountManager.getInstance().addAccount(bankAccount);
+                player.sendMessage("Reloaded Bank account!");
+            } catch (InterruptedException | ExecutionException interruptedException) {
+                interruptedException.printStackTrace();
+                player.sendMessage("An error occurred!");
+            }
+
+        }
     }
 }

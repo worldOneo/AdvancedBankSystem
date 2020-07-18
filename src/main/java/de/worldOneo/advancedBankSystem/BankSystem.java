@@ -2,11 +2,9 @@ package de.worldOneo.advancedBankSystem;
 
 import de.worldOneo.advancedBankSystem.bankItems.IStoreable;
 import de.worldOneo.advancedBankSystem.command.BankCommandExecutor;
-import de.worldOneo.advancedBankSystem.gui.*;
 import de.worldOneo.advancedBankSystem.listeners.OnInventoryClickEventListener;
 import de.worldOneo.advancedBankSystem.listeners.OnPlayerConnectionEvent;
 import de.worldOneo.advancedBankSystem.manager.BankAccountManager;
-import de.worldOneo.advancedBankSystem.manager.GUIManager;
 import de.worldOneo.advancedBankSystem.manager.MySQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
@@ -38,7 +36,6 @@ public class BankSystem extends JavaPlugin {
         }
         registerEventListener();
         registerCommands();
-        registerGUIS();
         if (!MySQLManager.getInstance().isEnabled()) {
             Bukkit.getPluginManager().disablePlugin(this);
         }
@@ -76,20 +73,6 @@ public class BankSystem extends JavaPlugin {
 
     private void registerCommands() {
         getCommand("banksystem").setExecutor(new BankCommandExecutor());
-    }
-
-
-    private void registerGUIS() {
-        GUIManager guiManager = GUIManager.getInstance();
-        guiManager.registerGUI(new PayGUI());
-        guiManager.registerGUI(new YesNoGUI());
-        guiManager.registerGUI(new InfoGUI());
-        guiManager.registerGUI(new AccountSettingsGUI());
-        guiManager.registerGUI(new BankGUI());
-        guiManager.registerGUI(new PlayerSelectorGUI());
-        guiManager.registerGUI(new AccountSelectorGUI());
-        guiManager.registerGUI(new PlayerSelectorGUI());
-        guiManager.registerGUI(new ValueSelectorGUI());
     }
 
     public static BankSystem getInstance() {

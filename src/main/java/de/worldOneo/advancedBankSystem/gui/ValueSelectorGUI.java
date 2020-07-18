@@ -11,19 +11,19 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class ValueSelectorGUI extends AbstractGUI {
-    private final HashMap<UUID, Integer> uuidValueHashMap = new HashMap<>();
-    private final HashMap<UUID, Consumer<Object>> uuidConsumerHashMap = new HashMap<>();
+public class ValueSelectorGUI extends AbstractInputGUI<Integer> {
+    private Integer value = 0;
+
+    public ValueSelectorGUI(Player player) {
+        super(player);
+    }
 
     @Override
-    public IGUI getInstance() {
-        return this;
+    public Integer getValue() {
+        return value;
     }
 
     private enum MenuItems {
@@ -59,34 +59,26 @@ public class ValueSelectorGUI extends AbstractGUI {
         if (!GUIUtils.isHandleable(e)) {
             return false;
         }
+
         List<MenuItems> menuItemsList = Arrays.stream(MenuItems.values())
                 .filter(menuItems -> menuItems.getItemStack().equals(e.getCurrentItem()))
                 .collect(Collectors.toList());
-        UUID uuid = e.getWhoClicked().getUniqueId();
+
+
         if (menuItemsList.size() == 1) {
-            int multiplier;
-            if (e.getClick() == ClickType.LEFT) {
-                multiplier = 1;
-            } else {
-                multiplier = -1;
-            }
-            uuidValueHashMap.put(uuid, uuidValueHashMap.get(uuid) + (multiplier * menuItemsList.get(0).getValue()));
+            int multiplier = (e.getClick() == ClickType.LEFT) ? 1 : -1;
+            value += (multiplier * menuItemsList.get(0).getValue());
         } else if (e.getCurrentItem().getItemMeta().isUnbreakable() && e.getCurrentItem().getType() == Material.GOLD_INGOT) {
-            uuidConsumerHashMap.get(uuid).accept(uuidValueHashMap.get(uuid));
+            commitValue();
             return super.handle(e);
         }
-        e.getWhoClicked().openInventory(createInventory((Player) e.getWhoClicked()));
+        open();
         return super.handle(e);
     }
 
-    /**
-     * @param callback is called with the selected value.
-     */
     @Override
-    public void open(Player player, Consumer<Object> callback) {
-        uuidConsumerHashMap.put(player.getUniqueId(), callback);
-        uuidValueHashMap.put(player.getUniqueId(), 0);
-        player.openInventory(createInventory(player));
+    public Inventory render() {
+        return createInventory(getPlayer());
     }
 
     private Inventory createInventory(Player player) {
@@ -94,7 +86,7 @@ public class ValueSelectorGUI extends AbstractGUI {
         Arrays.stream(MenuItems.values()).forEach(menuItems -> inventory.addItem(menuItems.getItemStack()));
         ItemStack itemStack = new ItemStack(Material.GOLD_INGOT);
         ItemMeta itemMeta = itemStack.getItemMeta();
-        itemMeta.setDisplayName(uuidValueHashMap.get(player.getUniqueId()).toString());
+        itemMeta.setDisplayName(value.toString());
         itemMeta.setUnbreakable(true);
         itemStack.setItemMeta(itemMeta);
         inventory.addItem(itemStack);
@@ -103,6 +95,6 @@ public class ValueSelectorGUI extends AbstractGUI {
 
     @Override
     public String getGUITitle() {
-        return Utils.colorize("&a&rSelect Value");
+        return "Select Value";
     }
 }

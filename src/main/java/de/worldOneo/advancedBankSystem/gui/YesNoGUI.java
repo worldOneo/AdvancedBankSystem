@@ -8,16 +8,22 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.function.Consumer;
+public class YesNoGUI extends AbstractInputGUI<Boolean> {
+    private String description = "Confirm!";
+    private boolean confirmed = false;
 
-public class YesNoGUI extends AbstractGUI {
-    private HashMap<UUID, Consumer<Object>> consumerHashMap = new HashMap<>();
+    public YesNoGUI(Player player) {
+        super(player);
+    }
 
     @Override
     public String getGUITitle() {
-        return Utils.colorize("&a&rConfirm?");
+        return "Confirm?";
+    }
+
+    @Override
+    public Boolean getValue() {
+        return confirmed;
     }
 
     public enum YesNo {
@@ -36,37 +42,35 @@ public class YesNoGUI extends AbstractGUI {
     }
 
     @Override
-    public IGUI getInstance() {
-        return this;
-    }
-
-    @Override
     public boolean handle(InventoryClickEvent e) {
         e.setCancelled(true);
         if (e.getCurrentItem() == null) {
             return false;
         }
         if (e.getCurrentItem().equals(YesNo.YES.getItemStack())) {
-            consumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(true);
+            confirmed = true;
+            commitValue();
         } else if (e.getCurrentItem().equals(YesNo.NO.getItemStack())) {
-            consumerHashMap.get(e.getWhoClicked().getUniqueId()).accept(false);
+            confirmed = false;
+            commitValue();
         }
         return super.handle(e);
     }
 
     @Override
-    public void open(Player player, Object descriptionObj, Consumer<Object> callback) {
-        String description = (String) descriptionObj;
-        consumerHashMap.put(player.getUniqueId(), callback);
+    public Inventory render() {
         Inventory inventory = Bukkit.createInventory(null, 9, getGUITitle());
         inventory.setItem(3, YesNo.YES.getItemStack());
         inventory.setItem(4, Utils.getNamedItem(Material.PAPER, description));
         inventory.setItem(5, YesNo.NO.getItemStack());
-        player.openInventory(inventory);
+        return inventory;
     }
 
-    @Override
-    public void open(Player player, Consumer<Object> callback) {
-        open(player, "Confirm!", callback);
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }
