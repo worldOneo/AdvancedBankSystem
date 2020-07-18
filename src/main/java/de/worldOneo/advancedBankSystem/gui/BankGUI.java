@@ -39,7 +39,7 @@ public class BankGUI extends AbstractGUI {
 
     @Override
     public String getGUITitle() {
-        return Utils.colorize("&a&rBankSystem");
+        return "BankSystem";
     }
 
     @Override

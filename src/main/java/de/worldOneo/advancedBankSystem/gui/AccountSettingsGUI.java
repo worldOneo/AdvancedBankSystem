@@ -51,7 +51,7 @@ public class AccountSettingsGUI extends AbstractGUI {
 
     @Override
     public String getGUITitle() {
-        return Utils.colorize("&a&rSettings");
+        return "Settings";
     }
 
     @Override
